@@ -220,4 +220,3 @@ Communicating with external network services, or reading/writing files from disk
 For a mixed CPU/IO-bound load a prefetch of around `2*cpucores` is a good baseline.
 For primarily networked IO, try `10*cpucores`.
 Make sure to specify `concurrency` in your guv config, and that the workers have enough memory.
-
