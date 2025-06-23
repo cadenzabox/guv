@@ -47,6 +47,7 @@
     "guv-validate": "./bin/guv-validate"
   },
   "scripts": {
+    "start": "node -r coffee-script/register ./bin/guv",
     "test": "grunt test"
   }
 }
