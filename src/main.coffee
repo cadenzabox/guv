@@ -5,7 +5,6 @@
 debug = require('debug')('guv:main')
 
 config = require './config'
-heroku = require './heroku'
 governor = require './governor'
 newrelic = require './newrelic'
 statuspage = require './statuspage'
@@ -17,6 +16,7 @@ parse = (argv) ->
     .option('--config <string>', 'Configuration string', String, '')
     .option('--dry-run', 'Configuration string', Boolean, false)
     .option('--oneshot', 'Run once instead of continously', Boolean, false)
+    .option('--platform <string>', 'Platform to use (heroku or render)', String, 'render')
     .parse(argv)
 
 exports.main = () ->
@@ -24,9 +24,17 @@ exports.main = () ->
   options = parse process.argv
   options.config = process.env['GUV_CONFIG'] if not options.config
 
-  heroku.dryrun = options['dry-run']
+  platform = null
+  if options.platform == 'heroku'
+    platform = require './heroku'
+  else if options.platform == 'render'
+    platform = require './render'
+  else
+    throw new Error "Unsupported platform: #{options.platform}"
+
+  platform.dryrun = options['dry-run']
   cfg = config.parse options.config
-  guv = new governor.Governor cfg
+  guv = new governor.Governor cfg, platform
   newrelic.register guv, cfg
   statuspage.register guv, cfg
 

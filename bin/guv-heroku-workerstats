@@ -1,3 +1,0 @@
-#!/bin/env node
-guv = require('../');
-guv.heroku.startuptime_main();

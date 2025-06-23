@@ -6,7 +6,6 @@ debug = require('debug')('guv:governor')
 { EventEmitter } = require 'events'
 bluebird = require 'bluebird'
 
-heroku = require './heroku'
 rabbitmq = require './rabbitmq'
 scale = require './scale'
 
@@ -73,7 +72,7 @@ realizeState = (cfg, state, callback) ->
       role: cfg[name].worker
       quantity: role.new_workers
 
-  heroku.setWorkers cfg['*'], workers, (err) ->
+  @platform.setWorkers cfg['*'], workers, (err) ->
     return callback err, state if err
     return callback null, state
 
@@ -99,8 +98,9 @@ exports.validateHistory = validateHistory = (h) ->
   throw new Error "Invalid history object: #{JSON.stringify(h)}" if not historyValid h
 
 class Governor extends EventEmitter
-  constructor: (c) ->
+  constructor: (c, p) ->
     @config = c
+    @platform = p
     @history = []
     @interval = null
 
@@ -139,14 +139,29 @@ class Governor extends EventEmitter
           details: results[1]
         return Promise.resolve r
 
-    getWorkers = bluebird.promisify heroku.getWorkers
+    getWorkers = bluebird.promisify @platform.getWorkers
 
     bluebird.props(
       rabbitmq: getQueues @config['*']
       workers: getWorkers @config
     ).then (current) =>
       state = @nextState current.rabbitmq.queues, current.rabbitmq.details, current.workers
-      return bluebird.promisify(realizeState)(@config, state)
+      realize = bluebird.promisify (cfg, state, cb) =>
+        workers = []
+        for name, role of state
+          continue if role.error
+          continue if not role.new_workers?
+          workers.push
+            app: role.app
+            role: cfg[name].worker
+            quantity: role.new_workers
+            id: role.id
+
+        @platform.setWorkers cfg['*'], workers, (err) ->
+          return cb err, state if err
+          return cb null, state
+
+      return realize(@config, state)
     .asCallback callback
     return null
 
