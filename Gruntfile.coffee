@@ -3,6 +3,18 @@ module.exports = ->
   @initConfig
     pkg: @file.readJSON 'package.json'
 
+    coffee:
+      compile:
+        options:
+          bare: true
+        files: [
+          expand: true
+          cwd: '.'
+          src: ['src/**/*.coffee', 'bin/*']
+          dest: 'lib/'
+          ext: '.js'
+        ]
+
     yaml:
       schemas:
         files: [
@@ -31,6 +43,7 @@ module.exports = ->
             level: 'warn'
 
   # Grunt plugins used for building
+  @loadNpmTasks 'grunt-contrib-coffee'
   @loadNpmTasks 'grunt-yaml'
 
   # Grunt plugins used for testing
@@ -40,6 +53,7 @@ module.exports = ->
   # Our local tasks
 
   @registerTask 'build', 'Build the chosen target platform', (target = 'all') =>
+    @task.run 'coffee'
     @task.run 'yaml'
 
   @registerTask 'test', 'Build and run automated tests', (target = 'all') =>
