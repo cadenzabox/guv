@@ -32,6 +32,7 @@
     "coffeeify": "^2.0.1",
     "grunt": "^1.6.1",
     "grunt-browserify": "^5.0.0",
+    "grunt-cli": "^1.5.0",
     "grunt-coffeelint": "^0.0.16",
     "grunt-contrib-coffee": "^2.1.0",
     "grunt-mocha-test": "^0.13.2",
@@ -49,7 +50,7 @@
   },
   "scripts": {
     "start": "node ./lib/bin/guv",
-    "build": "npx grunt build",
+    "build": "npm exec grunt build",
     "test": "npx grunt test"
   }
 }
