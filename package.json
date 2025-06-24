@@ -50,7 +50,7 @@
   },
   "scripts": {
     "start": "node ./lib/bin/guv",
-    "build": "npm exec grunt build",
+    "build": "npm install -g grunt-cli && npm install && grunt build",
     "test": "npx grunt test"
   }
 }
