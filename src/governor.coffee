@@ -99,6 +99,7 @@ exports.validateHistory = validateHistory = (h) ->
 
 class Governor extends EventEmitter
   constructor: (c, p) ->
+    super()
     @config = c
     @platform = p
     @history = []
