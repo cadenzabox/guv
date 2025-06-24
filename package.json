@@ -49,7 +49,7 @@
     "guv-validate": "./bin/guv-validate"
   },
   "scripts": {
-    "start": "node ./lib/index.js",
+    "start": "node index.js",
     "build": "npm install -g grunt-cli && npm install && grunt build",
     "test": "npx grunt test"
   }
