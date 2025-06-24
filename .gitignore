@@ -3,3 +3,4 @@ browser/
 schema/
 package-lock.json
 .ipynb_checkpoints/
+lib/
